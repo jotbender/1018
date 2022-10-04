@@ -1,6 +1,7 @@
 package abmt2022.week3.exercises;
 
 import org.matsim.api.core.v01.Scenario;
+import org.matsim.api.core.v01.population.Population;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
@@ -25,23 +26,29 @@ public class RunSimulationObjects {
         
         System.out.println("the new last iteration setting is: " + config.controler().getLastIteration());
         
-        config.controler().setOutputDirectory("output2");
+        config.controler().setOutputDirectory("output3");
 
         //ToDo: how can we change the flow capacity?
-        
+        config.qsim().setFlowCapFactor(0.5);
         
         //Load the scenario object
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
         
         
-        //ToDo: How do we modify input files in the scenario?
+        //Here we can access modify input files that make up the scenario
+        //Let's get the population 
+        Population population = scenario.getPopulation();
         
         
       //Create the controller object
         Controler controler = new Controler(scenario);
         
-        //ToDo: Can we still modify configurations and input file after it has gotten to controller?
+      //We can modify the config even after loading it in the scenario by calling it through the controler
+        //it depends on where you are. You would not want to modify the config using the previously created config object
+        //now because it has already been loaded into the scenario
+        
+        controler.getConfig().controler().setLastIteration(1);
 
         controler.run();
     }

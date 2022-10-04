@@ -3,7 +3,12 @@ package abmt2022.week3.exercises;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
-import org.matsim.api.core.v01.population.*;
+import org.matsim.api.core.v01.population.Activity;
+import org.matsim.api.core.v01.population.Leg;
+import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.Plan;
+import org.matsim.api.core.v01.population.Population;
+import org.matsim.api.core.v01.population.PopulationFactory;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.Controler;
@@ -25,57 +30,80 @@ public class RunMatsimUtils {
         * 6 - view the output plan file to see the new agent
         * */
 
-        //Aim: Creating a person and then adding the person to the equil population file
+        //Aim: Creating a person and then adding the person to the population file
 
-        //First load the equil scenario
+        //First load the Siouxfalls scenario
         String configPath = args[0];
         Config config = ConfigUtils.loadConfig(configPath);
+        config.controler().setOutputDirectory("output4");
 
         Scenario scenario = ScenarioUtils.loadScenario(config);
 
-        //ToDo: Get the population from the scenario
-        //Population population
+        //Get the population from the scenario
+        Population population = scenario.getPopulation();
 
-        //ToDo: use population factory to create a person
-        //PopulationFactory popFactory
+        //Use population factory to create a person
+        PopulationFactory popFactory = population.getFactory();
 
-        //ToDo: To create person we need the person ID, create Id of type person
-        //Id<Person> personId
+        //To create person we need the person ID, create Id of type person
+        Id<Person> personId = Id.create("22813_3", Person.class);
 
-        //ToDo: Create person
-        //Person person
+        //Create person
+        Person person = popFactory.createPerson(personId);
 
-        //ToDo: A person needs a plan so we create a plan container to take the activities and legs of a person
-        //but where do we create the plan from
-        //Plan plan;
+        //A person needs a plan so we create a plan container to take the activities and legs of a person
+        Plan plan = popFactory.createPlan();
         
         //what are the things needed in a plans file?
 
-        //ToDo: Create person activities
+        //Create person activities
         //There are many ways to create activity, either from facility id, coordinates, or network link
 
-        //ToDo: Create Coordinate object
+        //First create Coordinate object for the first activity, ensure the coordinates are within the simulated region
+        Coord coord1 = CoordUtils.createCoord(682581.7708999999,4824143.6043);
+        
+        //Create activities
+         Activity act1 = popFactory.createActivityFromCoord("home", coord1);
+         act1.setEndTime(6*3600);
+         
+         Activity act2 = popFactory.createActivityFromCoord("work", CoordUtils.createCoord(683357.0, 4819589.8));
+         act2.setEndTime(7*3600);
+         
+         //coordinates can also be created using the Coord class as below        
+         Activity act3 = popFactory.createActivityFromCoord("home", new Coord(682581.7708999999,4824143.6043));
 
-        //ToDo: create person leg
+        //Create person leg
+         Leg leg1 = popFactory.createLeg("car");
+         
+         //RouteFactories routeFactories = popFactory.getRouteFactories();
+        // routeFactories.createRoute(new Route, null, null);
 
-        //ToDo: add activities to plan
+        //Add activities and leg to plan
+         plan.addActivity(act1);
+         plan.addLeg(leg1);
+         plan.addActivity(act2);
+         plan.addLeg(leg1);
+         plan.addActivity(act3);
 
-        //ToDo: add plan to person
+        //Add plan to person
+         person.addPlan(plan);
 
-        //ToDo: we can add some person attributes too. Maybe age, etc
-
-
-        //ToDo: add person to population
-
-        //ToDo*: Write out new population or let it run in your simulation
+        //We can add some person attributes too. Maybe age, etc
+         person.getAttributes().putAttribute("age", 20);
+         
 
 
-        //Let's run our modified scenario with new population
+        //Add person to population
+         population.addPerson(person);
+
+
+        //Let's run the modified scenario
 
         Controler controler = new Controler(scenario);
 
 
         controler.getConfig().controler().setLastIteration(1);
+
 
         controler.run();
 
