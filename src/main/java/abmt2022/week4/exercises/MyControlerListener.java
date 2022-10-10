@@ -19,7 +19,6 @@ public class MyControlerListener implements StartupListener, IterationEndsListen
 	private final int[] leaveEvents;
 	private final Scenario scenario;
 	
-	@Inject
 	public MyControlerListener(Scenario scenario) {
 		enterEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
 		leaveEvents = new int[scenario.getConfig().controler().getLastIteration() + 1];
