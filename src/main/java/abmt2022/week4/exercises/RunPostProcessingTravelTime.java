@@ -1,20 +1,25 @@
 package abmt2022.week4.exercises;
 
+import org.matsim.core.api.experimental.events.EventsManager;
+import org.matsim.core.events.EventsUtils;
+import org.matsim.core.events.MatsimEventsReader;
+
 public class RunPostProcessingTravelTime {
 
 	public static void main(String[] args) {
-
-		//create event manager
 		
+		EventsManager eventsManager = EventsUtils.createEventsManager();
 		// create an object for the EventHandler and add to the event manager
-
-		
+		CalculateAverageTravelTime myEventHandler = new CalculateAverageTravelTime();
+				eventsManager.addHandler(myEventHandler);
+				
 		// read the events from our events file
+		MatsimEventsReader matsimEventsReader = new MatsimEventsReader(eventsManager);
 		
-		// process events using event manager 
-
+		// the events manager will automatically process the read events 
+		matsimEventsReader.readFile(args[0]);
 		
-		//print out travel time
+		System.out.println(myEventHandler.getAverageTravelTime());
 				
 	}
 

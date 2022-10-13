@@ -21,6 +21,7 @@ public class RunEventsPostprocessing {
 		matsimEventsReader.readFile(args[0]);
 		
 		System.out.println(myEventHandler.getCounterEnter());
+		System.out.println(myEventHandler.getCounterLeave());
 				
 	}
 
